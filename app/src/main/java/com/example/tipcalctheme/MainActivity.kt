@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -50,6 +51,7 @@ fun DemoScreen(modifier: Modifier = Modifier) {
     var dishesCount by remember { mutableStateOf("") }
     var tipPercent by remember { mutableStateOf(0f) }
     var selectedDiscount by remember { mutableStateOf(0) }
+    var result by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -115,6 +117,37 @@ fun DemoScreen(modifier: Modifier = Modifier) {
                 Text("$percent%", fontSize = 18.sp, modifier = Modifier.padding(start = 8.dp))
             }
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(onClick = {
+            val bill = billAmount.toDoubleOrNull()
+            val dishes = dishesCount.toIntOrNull()
+            result = if (bill == null || dishes == null || bill <= 0) {
+                "Введите корректные данные"
+            } else {
+                val discount = when {
+                    dishes <= 2 -> 3
+                    dishes <= 5 -> 5
+                    dishes <= 10 -> 7
+                    else -> 10
+                }
+                selectedDiscount = discount
+                val sumAfterDiscount = bill * (1 - discount / 100.0)
+                val totalWithTip = sumAfterDiscount * (1 + tipPercent / 100.0)
+                "Скидка: $discount%\nЧаевые: ${tipPercent.toInt()}%\nК оплате: ${"%.2f".format(totalWithTip)}"
+            }
+        }) {
+            Text("Рассчитать")
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = result,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
