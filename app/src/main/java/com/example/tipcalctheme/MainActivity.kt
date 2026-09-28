@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -63,7 +64,7 @@ fun DemoScreen(modifier: Modifier = Modifier) {
             text = "TipCalc",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 30.dp)
+            modifier = Modifier.padding(bottom = 24.dp)
         )
 
         OutlinedTextField(
@@ -73,7 +74,7 @@ fun DemoScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = dishesCount,
@@ -82,7 +83,7 @@ fun DemoScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text("Чаевые: ${tipPercent.toInt()}%", fontSize = 18.sp)
 
@@ -93,9 +94,11 @@ fun DemoScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider()
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Скидка (выбирается автоматически):", fontSize = 16.sp)
+        Text("Скидка (выбирается автоматически):", fontSize = 16.sp, fontWeight = FontWeight.Medium)
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -118,34 +121,41 @@ fun DemoScreen(modifier: Modifier = Modifier) {
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider()
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {
-            val bill = billAmount.toDoubleOrNull()
-            val dishes = dishesCount.toIntOrNull()
-            result = if (bill == null || dishes == null || bill <= 0) {
-                "Введите корректные данные"
-            } else {
-                val discount = when {
-                    dishes <= 2 -> 3
-                    dishes <= 5 -> 5
-                    dishes <= 10 -> 7
-                    else -> 10
+        Button(
+            onClick = {
+                val bill = billAmount.toDoubleOrNull()
+                val dishes = dishesCount.toIntOrNull()
+                result = if (bill == null || dishes == null || bill <= 0) {
+                    "Введите корректные данные"
+                } else {
+                    val discount = when {
+                        dishes <= 2 -> 3
+                        dishes <= 5 -> 5
+                        dishes <= 10 -> 7
+                        else -> 10
+                    }
+                    selectedDiscount = discount
+                    val sumAfterDiscount = bill * (1 - discount / 100.0)
+                    val totalWithTip = sumAfterDiscount * (1 + tipPercent / 100.0)
+                    "Скидка: $discount%\n" +
+                            "Чаевые: ${tipPercent.toInt()}%\n" +
+                            "К оплате: ${"%.2f".format(totalWithTip)}"
                 }
-                selectedDiscount = discount
-                val sumAfterDiscount = bill * (1 - discount / 100.0)
-                val totalWithTip = sumAfterDiscount * (1 + tipPercent / 100.0)
-                "Скидка: $discount%\nЧаевые: ${tipPercent.toInt()}%\nК оплате: ${"%.2f".format(totalWithTip)}"
-            }
-        }) {
-            Text("Рассчитать")
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Рассчитать", fontSize = 18.sp)
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = result,
-            fontSize = 20.sp,
+            fontSize = 22.sp,
             fontWeight = FontWeight.Bold
         )
     }
