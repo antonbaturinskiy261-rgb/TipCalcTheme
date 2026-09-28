@@ -5,12 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -46,6 +49,7 @@ fun DemoScreen(modifier: Modifier = Modifier) {
     var billAmount by remember { mutableStateOf("") }
     var dishesCount by remember { mutableStateOf("") }
     var tipPercent by remember { mutableStateOf(0f) }
+    var selectedDiscount by remember { mutableStateOf(0) }
 
     Column(
         modifier = modifier
@@ -86,6 +90,31 @@ fun DemoScreen(modifier: Modifier = Modifier) {
             valueRange = 0f..25f,
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text("Скидка (выбирается автоматически):", fontSize = 16.sp)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        val discounts = listOf(3, 5, 7, 10)
+        discounts.forEach { percent ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = (selectedDiscount == percent),
+                        onClick = { /* выбор только программный */ }
+                    )
+            ) {
+                RadioButton(
+                    selected = (selectedDiscount == percent),
+                    onClick = null
+                )
+                Text("$percent%", fontSize = 18.sp, modifier = Modifier.padding(start = 8.dp))
+            }
+        }
     }
 }
 
